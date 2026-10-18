@@ -9,7 +9,6 @@ use axum::{
 use serde::{Deserialize, Serialize};
 
 
-
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct Todo {
     pub id: u64,
