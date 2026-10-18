@@ -1,0 +1,31 @@
+name: Deploy Rust
+
+# Run when Rust code is merged into the production branch
+on:
+  push:
+    branches: [production]
+    paths:
+      - "rust-todo/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into server and redeploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            cd ~/ci-cd
+            git pull origin production
+
+            cd rust-todo
+            cargo build --release
+
+            # stop the old app (whatever is running on port 8080)
+            fuser -k 8080/tcp || true
+
+            # start the new app in the background
+            nohup ./target/release/rust-todo > app.log 2>&1 &

@@ -1,0 +1,24 @@
+name: Bun CI
+
+# Run on every PR to main that changes the Express app
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "express-todo/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install
+        run: cd express-todo && bun install
+
+      - name: Build
+        run: cd express-todo && bun run build
+
+      - name: Test
+        run: cd express-todo && bun test

@@ -1,0 +1,31 @@
+name: Deploy Express
+
+# Run when Express code is merged into the production branch
+on:
+  push:
+    branches: [production]
+    paths:
+      - "express-todo/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into server and redeploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            cd ~/ci-cd
+            git pull origin production
+
+            cd express-todo
+            bun install
+
+            # stop the old app (whatever is running on port 3000)
+            fuser -k 3000/tcp || true
+
+            # start the new app in the background
+            nohup bun src/index.ts > app.log 2>&1 &

@@ -1,0 +1,21 @@
+name: Rust CI
+
+# Run on every PR to main that changes the Rust app
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "rust-todo/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build
+        run: cd rust-todo && cargo build
+
+      - name: Test
+        run: cd rust-todo && cargo test
