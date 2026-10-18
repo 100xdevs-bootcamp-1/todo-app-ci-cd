@@ -10,7 +10,7 @@ export function createApp() {
   let nextId = 1;
 
   app.get("/health", (_req, res) => {
-    res.json({ status: "ok1" });
+    res.json({ status: "ok2" });
   });
 
   app.get("/todos", (_req, res) => {
