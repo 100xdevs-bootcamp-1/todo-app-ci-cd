@@ -18,8 +18,12 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
           script: |
+            set -e   # stop (and fail the job) if any command fails
+
+            # make the server's code exactly match the production branch
             cd ~/ci-cd
-            git pull origin production
+            git fetch origin production
+            git reset --hard origin/production
 
             cd rust-todo
             cargo build --release
